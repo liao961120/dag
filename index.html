@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdeep Diagram Live Editor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@1,500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h2>Markdeep Diagram Live Editor</h2>
+    <br/>
+    
+    <div class="container">
+        <div id="diagram"></div>
+        <textarea id="edit" data-enable-grammarly="false">
+             .-.                     .-.        
+            | P |--->  R   |        | P |--->  R
+             '-'           |         '-'        
+            ^   ^          |        ^   ^       
+           /     \         |       /     \      
+        .-+       +-.      |      /       \    
+       | A |     | D |     |     S         I    
+        '-'       '-'                           
+        </textarea>
+    </div>
+
+    <script>window.markdeepOptions = {mode: 'script'};</script>
+    <!-- <script src="markdeep.min.js"></script> -->
+    <script src="https://morgan3d.github.io/markdeep/latest/markdeep.min.js"></script>
+
+    <script>
+        // Initialize
+        var graph = document.getElementById('diagram');
+        graph.innerHTML = window.markdeep.formatDiagram(document.getElementById('edit').value, "left");;
+        graph.querySelectorAll('path').forEach( e => {
+            e.setAttribute("stroke", "currentcolor")
+        });
+
+        // Update onKeyUp
+        document.getElementById('edit').addEventListener("keyup", function() {
+            graph.innerHTML = window.markdeep.formatDiagram(this.value, "left");
+            graph.querySelectorAll('path').forEach( e => {
+                e.setAttribute("stroke", "currentcolor")
+            });
+        })
+    </script>
+
+
+    <style>
+        body {
+            margin: 0;
+            padding: 1%;
+            width: 98%;
+        }
+        h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            min-height: 80vh;
+        }
+        textarea {
+            width: 54%;
+            min-height: 75vh;
+        }
+        #diagram {
+            width: 45%;
+        }
+        svg {
+            font-family: 'Alegreya', 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-size: 16px;
+        }
+    </style>
+</body>
+</html>
