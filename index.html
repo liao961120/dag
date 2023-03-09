@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdeep Diagram Live Editor</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@1,500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,500;0,800;1,500;1,800&display=swap" rel="stylesheet">
 </head>
 <body>
     <h2>Markdeep Diagram Live Editor</h2>
@@ -16,33 +16,37 @@
     <div class="container">
         <div id="diagram"></div>
         <textarea id="edit" data-enable-grammarly="false">
-             .-.                     .-.                         
-      .---> | P |----> R   |        | P |---->  R                  
-     |       '-'           |         '-'                           
-     |      ^   ^          |        ^   ^                          
-     |     /     \         |       /     \                         
-     |  .-+       +-.      |      /       \                        
-     | | A |     | D |     |     Sₐ        Iᵢ                      
-     |  '-'       '-'      |                                       
-     |    ^       ^        |                                       
-     |     \     /         |                                       
-     |      +   +          |                                       
-      '-----  Sₐ                                                   
-
-                                                                   
-                                                                                                                                      
-                                                                   
-                                                                   
-                                                                                                                                      
-                                                                   
-                                                                   
-                                                                   
-                                                                         
-                                                                         
-                                                                         
-                                                                         
+                         J                                               
+                         |                                               
+                         v                                               
+               .-.                                                       
+              | E |--->  S  <--- T                                       
+               '-'                     K*                                
+                         ^            ^                                  
+                         |           /                                   
+                        +-.       .-+                                    
+                       | A |---> | K |---> D                             
+                        +-+       +-+                                    
+                       ^   ^     ^                                       
+                      /     \   /                                        
+                   +-+       +-+                                         
+           R* <---| R |     | P |                                        
+                   +-+       +-'                                         
+                      \     /                                            
+                       v   v                                             
+                        +-+                                              
+                       | U |                                             
+                        '-'                                                         
         </textarea>
     </div>
+
+
+    <!-- PNG Output -->
+    Scale: <input id="scale" type="number" value="5"> <button id="convert">Convert to PNG</button>
+    <div class="img-output">
+        <img id="output">
+    </div>
+
 
     <script>window.markdeepOptions = {mode: 'script', detectMath: true};</script>
     <!-- <script src="markdeep.min.js"></script> -->
@@ -63,6 +67,41 @@
                 e.setAttribute("stroke", "currentcolor")
             });
         })
+    </script>
+
+    <!-- Convert to PNG -->
+    <script>
+        const btn = document.getElementById("convert");
+        
+        btn.onclick = () => {
+            const style = document.querySelector('style').cloneNode(true);
+            const scale = document.getElementById("scale").value;
+            const input = document.querySelector('#diagram svg').cloneNode(true);
+            const output = document.querySelector('#output')
+            input.appendChild( style );
+            
+            const svgData = new XMLSerializer().serializeToString(input)
+            const svgDataBase64 = btoa(unescape(encodeURIComponent(svgData)))
+            const svgDataUrl = `data:image/svg+xml;charset=utf-8;base64,${svgDataBase64}`
+
+            const image = new Image()
+            image.addEventListener('load', () => {
+                const width = input.getAttribute('width') * scale
+                const height = input.getAttribute('height') * scale
+                const canvas = document.createElement('canvas')
+
+                canvas.setAttribute('width', width)
+                canvas.setAttribute('height', height)
+
+                const context = canvas.getContext('2d')
+                context.drawImage(image, 0, 0, width, height)
+
+                const dataUrl = canvas.toDataURL('image/png')
+                output.src = dataUrl
+            })
+            image.src = svgDataUrl
+
+        };
     </script>
 
 
@@ -93,7 +132,24 @@
         svg {
             font-family: 'Alegreya', 'Times New Roman', Times, serif;
             font-style: italic;
+            font-weight: bold;
             font-size: 16px;
+        }
+        input#scale {
+            width: 2.5em;
+            margin-right: .8em;
+        }
+        div.img-output {
+            width: 100%;
+            margin: 1em 0;
+            padding: 0;
+        }
+        img#output {
+            max-width: 58%;
+            border: 2px solid gray;
+            border-radius: 5px;
+            margin: 1em auto 0 1%;
+            padding: 0 auto;
         }
     </style>
 </body>
